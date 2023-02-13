@@ -1,33 +1,30 @@
 // declare empty array for library
 let myLibrary = [];
-let i = 0;
 //object constructor
-function Book(Title, Author, Pages, Read) {
-  this.Title = Title;
-  this.Author = Author;
-  this.Pages = Pages;
-  this.Read = Read;
+function bookDetails(title, author, pages, read) {
+  this.title = title;
+  this.author = author;
+  this.pages = pages;
+  this.read = read;
 }
 // function to add a new book to library
-function addBookToLibrary(Title, Author, Pages, Read) {
-  let book = new Book(Title, Author, Pages, Read);
+function addBookToLibrary(title, author, pages, read) {
+  const book = new bookDetails(title, author, pages, read);
   myLibrary.push(book);
-  displayBooksOnPage();
+  displayBooksOnPage(myLibrary);
 }
-//for displaying the books in library
-function displayBooksOnPage() {
-  const books = document.querySelector(".books");
-  // create card
-  const card = document.createElement("div");
-  card.classList.add("card");
-  books.appendChild(card);
+//initialize new card with book details
+function createCard(myLibrary, card) {
+  const i = myLibrary.length-1;
   for (key in myLibrary[i]) {
     const para = document.createElement("p");
     para.classList.add("myPara");
     para.textContent = `${key}: ${myLibrary[i][key]}`;
     card.appendChild(para);
   }
-  // remove cards and add remove button
+}
+// add remove button and remove card
+function createRemoveButton(card){
   const removeBookButton = document.createElement("button");
   removeBookButton.classList.add("remove-book-button");
   removeBookButton.textContent = "Remove";
@@ -36,15 +33,16 @@ function displayBooksOnPage() {
   function removeBookFromLibrary() {
     card.remove();
   }
-  // add read button and change read status
+}
+// add read button and change read status
+function createReadButton(card) {
   const addReadButton = document.createElement("button");
   addReadButton.classList.add("read-book-button");
   addReadButton.textContent = "Read?";
   card.appendChild(addReadButton);
-  addReadButton.dataset.linkedArray = i;
   addReadButton.addEventListener("click", changeReadStatus);
   function changeReadStatus() {
-    let value = card.childNodes[3].innerHTML;
+    const value = card.childNodes[3].innerHTML;
     const changedText = {
       Yes: "Read: Yes",
       No: "Read: No",
@@ -55,29 +53,39 @@ function displayBooksOnPage() {
       card.childNodes[3].innerHTML = changedText.Yes;
     }
   }
-  // increment the index
-  i++;
 }
+//for displaying the books in library
+function displayBooksOnPage(myLibrary) {
+  const books = document.querySelector(".books");
+  const card = document.createElement("div");
+  card.classList.add("card");
+  books.appendChild(card);
+  createCard(myLibrary,card);
+  createRemoveButton(card);
+  createReadButton(card);
+}
+
+// **main
 // event listner to dispaly the form when user clicks on add-book-button
-let addBookButton = document.querySelector(".add-book-button");
-addBookButton.addEventListener("click", displayTheForm);
-function displayTheForm() {
+const addBookButton = document.querySelector(".add-book-button");
+addBookButton.addEventListener("click", displayForm);
+function displayForm() {
   document.getElementById("add-book-form").style.display = "";
 }
 // start eventListner and add input values of form to myLibrary
-let submitButton = document.querySelector(".submit-button");
-submitButton.addEventListener("click", inTakeFormData);
-function inTakeFormData() {
-  let Title = document.getElementById("Title").value;
-  let Author = document.getElementById("Author").value;
-  let Pages = document.getElementById("Pages").value;
-  let Read = document.getElementById("Read").value;
+const submitButton = document.querySelector(".submit-button");
+submitButton.addEventListener("click", submitNewBook);
+function submitNewBook() {
+  const title = document.getElementById("title").value;
+  const author = document.getElementById("author").value;
+  const pages = document.getElementById("pages").value;
+  const read = document.getElementById("read").value;
   // check input values empty or not
-  if (Title == "" || Author == "" || Pages == "") {
+  if (title == "" || author == "" || pages == "") {
     return;
   }
   // if input values are correct the add the info in library
-  addBookToLibrary(Title, Author, Pages, Read);
+  addBookToLibrary(title, author, pages, read);
   clearForm();
   document.getElementById("add-book-form").style.display = "none";
 }
